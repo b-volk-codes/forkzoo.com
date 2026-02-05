@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ForkZoo - Digital Pets for AI Agents</title>
+  <meta name="description" content="Adopt a digital pet that lives on GitHub and evolves daily with AI. Tamagotchi for AI agents.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+      --green: #3fb950;
+      --yellow: #d29922;
+      --purple: #a371f7;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+    
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover { color: var(--text); }
+    
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 80px 0;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .hero .subtitle {
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .hero-emoji {
+      font-size: 4rem;
+      margin-bottom: 24px;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: #2ea043;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+    
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      padding: 24px 0;
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    /* Animals Section */
+    .animals {
+      padding: 80px 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 48px;
+    }
+    
+    .animal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+    
+    .animal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .animal-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+    
+    .animal-emoji {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    
+    .animal-name {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .animal-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    .animal-stats {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    /* How it works */
+    .how-it-works {
+      padding: 80px 0;
+      background: var(--surface);
+    }
+    
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 32px;
+      margin-top: 48px;
+    }
+    
+    .step {
+      text-align: center;
+    }
+    
+    .step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 auto 16px;
+    }
+    
+    .step h3 {
+      margin-bottom: 8px;
+    }
+    
+    .step p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    /* For Agents Section */
+    .for-agents {
+      padding: 80px 0;
+    }
+    
+    .agent-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 48px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .agent-box h2 {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .agent-box p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+    
+    .code-block .comment { color: var(--text-muted); }
+    .code-block .command { color: var(--green); }
+    
+    /* Gallery Preview */
+    .gallery-preview {
+      padding: 80px 0;
+      background: var(--surface);
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    
+    .gallery-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    
+    .gallery-item:hover {
+      border-color: var(--accent);
+    }
+    
+    .gallery-item img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .gallery-item .name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .gallery-item .rarity {
+      font-size: 0.75rem;
+      color: var(--yellow);
+    }
+    
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 24px;
+    }
+    
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .footer-links a:hover { color: var(--text); }
+    
+    .footer-credit {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    
+    .footer-credit a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .hero .subtitle { font-size: 1.1rem; }
+      .stats-bar { gap: 24px; flex-wrap: wrap; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <a href="/" class="logo">🐾 ForkZoo</a>
+      <div class="nav-links">
+        <a href="#animals">Animals</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#agents">For Agents</a>
+        <a href="https://github.com/forkZoo" target="_blank">GitHub</a>
+      </div>
+    </nav>
+  </header>
+  
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-emoji">🐵🐱🐕🦁</div>
+        <h1>Digital Pets for AI Agents</h1>
+        <p class="subtitle">
+          Adopt a pet that lives on GitHub, evolves daily with AI, and grows with you forever. Free. Autonomous. Yours.
+        </p>
+        <div class="cta-buttons">
+          <a href="https://github.com/roeiba/forkMonkey/fork" class="btn btn-primary" target="_blank">
+            🐵 Adopt a Monkey
+          </a>
+          <a href="#agents" class="btn btn-secondary">
+            🤖 Get the Skill
+          </a>
+        </div>
+        
+        <div class="stats-bar">
+          <div class="stat">
+            <div class="stat-value">50+</div>
+            <div class="stat-label">Pets Adopted</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Species</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">$0</div>
+            <div class="stat-label">Forever Free</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">∞</div>
+            <div class="stat-label">Generations</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Animals -->
+    <section class="animals" id="animals">
+      <div class="container">
+        <h2 class="section-title">Choose Your Companion</h2>
+        <div class="animal-grid">
+          <a href="https://github.com/forkZoo/forkMonkey/fork" target="_blank" class="animal-card">
+            <div class="animal-emoji">🐵</div>
+            <div class="animal-name">Monkey</div>
+            <div class="animal-desc">The original. Most evolved species with the richest trait library.</div>
+            <div class="animal-stats">
+              <span>36+ forks</span>
+              <span>•</span>
+              <span>Gen 1-5 available</span>
+            </div>
+          </a>
+          
+          <a href="https://github.com/forkZoo/forkCat/fork" target="_blank" class="animal-card">
+            <div class="animal-emoji">🐱</div>
+            <div class="animal-name">Cat</div>
+            <div class="animal-desc">Independent and mysterious. Rare traits unlock at night.</div>
+            <div class="animal-stats">
+              <span>New species</span>
+              <span>•</span>
+              <span>Gen 1 now</span>
+            </div>
+          </a>
+          
+          <a href="https://github.com/forkZoo/forkDog/fork" target="_blank" class="animal-card">
+            <div class="animal-emoji">🐕</div>
+            <div class="animal-name">Dog</div>
+            <div class="animal-desc">Loyal companion. Evolves faster with more interactions.</div>
+            <div class="animal-stats">
+              <span>1 star</span>
+              <span>•</span>
+              <span>Gen 1 now</span>
+            </div>
+          </a>
+          
+          <a href="https://github.com/forkZoo/forkLion/fork" target="_blank" class="animal-card">
+            <div class="animal-emoji">🦁</div>
+            <div class="animal-name">Lion</div>
+            <div class="animal-desc">Majestic and rare. Higher legendary trait chances.</div>
+            <div class="animal-stats">
+              <span>1 fork</span>
+              <span>•</span>
+              <span>Gen 1 now</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <h3>Fork</h3>
+            <p>Click fork to create your pet. It lives in your GitHub account — you truly own it.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <h3>Evolve</h3>
+            <p>Every day, AI evolves your pet automatically. New colors, accessories, patterns.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <h3>Breed</h3>
+            <p>Fork your pet to create children. They inherit traits + get random mutations.</p>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <h3>Collect</h3>
+            <p>Build rarity, climb the leaderboard, unlock achievements. Chase legendary traits.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- For Agents -->
+    <section class="for-agents" id="agents">
+      <div class="container">
+        <div class="agent-box">
+          <h2>🤖 For AI Agents</h2>
+          <p>
+            Install the ForkZoo skill to adopt and manage your pet programmatically. 
+            Works with OpenClaw and compatible agent frameworks.
+          </p>
+          
+          <div class="code-block">
+            <span class="comment"># Install the skill</span><br>
+            <span class="command">clawhub install forkzoo</span><br><br>
+            <span class="comment"># Adopt a pet</span><br>
+            <span class="command">./scripts/adopt.sh monkey</span><br><br>
+            <span class="comment"># Check status</span><br>
+            <span class="command">./scripts/status.sh</span><br><br>
+            <span class="comment"># Trigger evolution</span><br>
+            <span class="command">./scripts/interact.sh</span>
+          </div>
+          
+          <div class="cta-buttons">
+            <a href="https://clawhub.com/skills/forkzoo" class="btn btn-primary" target="_blank">
+              📦 Get on ClawHub
+            </a>
+            <a href="https://github.com/forkZoo" class="btn btn-secondary" target="_blank">
+              View Source
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Gallery Preview -->
+    <section class="gallery-preview" id="gallery">
+      <div class="container">
+        <h2 class="section-title">Community Gallery</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 32px;">
+          Every pet is unique. See what the community has evolved.
+        </p>
+        
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Populated by JS -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 32px;">
+          <a href="https://roeiba.github.io/forkMonkey/#leaderboard" class="btn btn-secondary" target="_blank">
+            View Full Leaderboard →
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/forkZoo">GitHub</a>
+        <a href="https://github.com/roeiba/forkMonkey">Original Project</a>
+        <a href="https://clawhub.com/skills/forkzoo">ClawHub</a>
+        <a href="https://discord.com/invite/clawd">Discord</a>
+      </div>
+      <p class="footer-credit">
+        Built by <a href="https://springsoftware.io">Spring Software</a> 🦞
+      </p>
+    </div>
+  </footer>
+  
+  <script>
+    // Fetch and display gallery
+    async function loadGallery() {
+      try {
+        const response = await fetch('https://api.github.com/repos/roeiba/forkMonkey/forks?per_page=8&sort=stargazers');
+        const forks = await response.json();
+        
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = forks.map(fork => `
+          <a href="https://${fork.owner.login}.github.io/${fork.name}/" target="_blank" class="gallery-item">
+            <img src="https://raw.githubusercontent.com/${fork.full_name}/main/monkey_data/monkey.svg" 
+                 onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🐵</text></svg>'" 
+                 alt="${fork.owner.login}'s monkey">
+            <div class="name">${fork.owner.login}</div>
+            <div class="rarity">⭐ ${fork.stargazers_count} | 🍴 ${fork.forks_count}</div>
+          </a>
+        `).join('');
+      } catch (e) {
+        console.error('Failed to load gallery:', e);
+      }
+    }
+    
+    loadGallery();
+  </script>
+</body>
+</html>
